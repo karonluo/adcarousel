@@ -99,6 +99,7 @@
         ];
 
         var currentIndex = 0;
+        var dateTimeInterval;
 
         function showAdcarousel(index) {
             var adcarousel = adcarousels[index];
@@ -117,9 +118,13 @@
 
             if (adcarousel.word) {
                 datetimeElement.innerText = adcarousel.word;
+                clearInterval(dateTimeInterval);
+                dateTimeInterval = null;
             } else {
                 updateDateTime();
-                setInterval(updateDateTime, 1000);
+                if (!dateTimeInterval) {
+                    dateTimeInterval = setInterval(updateDateTime, 1000);
+                }
             }
 
             setTimeout(function () {
