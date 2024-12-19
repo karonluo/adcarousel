@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Ad Carousel Preview</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            width: 100vw;
+            background-image: url('{{ adcarousel.picpath }}');
+        }
+
+        .datetime {
+            position: absolute;
+            font-family:'Microsoft YaHei';
+            font-weight:bold;
+            color: {{ adcarousel.fontcolor }};
+            font-size: {{ adcarousel.fontsize }}px;
+            left: {{ font_position_x }}px;
+            top: {{ font_position_y }}px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="datetime" id="datetime"></div>
+
+    <script language="javascript">
+        function updateDateTime() {
+            var now = new Date();
+            var formattedDateTime = now.getFullYear() + '.' +
+                ('0' + (now.getMonth() + 1)).slice(-2) + '.' +
+                ('0' + now.getDate()).slice(-2) + ' ' +
+                ('0' + now.getHours()).slice(-2) + ':' +
+                ('0' + now.getMinutes()).slice(-2) + ':' +
+                ('0' + now.getSeconds()).slice(-2);
+            document.getElementById('datetime').innerText = formattedDateTime;
+        }
+
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
+    </script>
+</body>
+
+</html>

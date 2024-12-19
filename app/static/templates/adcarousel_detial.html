@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Ad Carousel Detail</title>
+    <style>
+        body {
+            background-color: #fafafa;
+            font-size: 12px;
+            font-family: 'Microsoft YaHei';
+            color: #303030;
+        }
+
+        .field {
+            margin-bottom: 10px;
+        }
+
+        .field label {
+            font-weight: bold;
+        }
+
+        .field input,
+        .field select {
+            width: 100%;
+            padding: 5px;
+            margin-top: 5px;
+        }
+
+        .messages {
+            margin-bottom: 20px;
+        }
+
+        .messages .success {
+            color: green;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var formChanged = false;
+
+            $('form :input').change(function () {
+                formChanged = true;
+                $('#previewButton').prop('disabled', true);
+            });
+
+            $('form').submit(function () {
+                formChanged = false;
+                $('#previewButton').prop('disabled', false);
+            });
+
+            $('#previewButton').click(function (e) {
+                if (formChanged) {
+                    e.preventDefault();
+                    alert('请先保存更改，然后再预览。');
+                } else {
+                    window.open('/adcarousel/{{ adcarousel.id }}/preview/', '_blank');
+                }
+            });
+        });
+
+        function validateShowTimeout(input) {
+            if (input.value < 5) {
+                alert('播放时间不能小于5秒');
+                input.value = 5;
+            }
+        }
+
+        function validateFontPosition(input) {
+            var regex = /^\d+,\d+$/;
+            if (!regex.test(input.value)) {
+                alert('文字位置格式不正确，请输入 "x,y" 格式的值');
+                input.value = '';
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Ad Carousel Detail</h1>
+        <div class="messages">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="{{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <form method="post" action="{% if adcarousel %}{% url 'adcarousel_update' adcarousel.id %}{% else %}{% url 'adcarousel_create' %}{% endif %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="field">
+                <label>图片HTML路径:</label>
+                <input type="file" name="picpath" accept="image/*">
+                {% if adcarousel and adcarousel.picpath %}
+                    <p>当前路径: <a href="{{ adcarousel.picpath }}" target="_blank">{{ adcarousel.picpath }}</a></p>
+                {% endif %}
+            </div>
+            <div class="field">
+                <label>显示秒数:</label>
+                <input type="number" name="showtimeout" value="{{ adcarousel.showtimeout }}" min="5" onblur="validateShowTimeout(this)">
+            </div>
+            <div class="field">
+                <label>文字颜色:</label>
+                <input type="color" style="width:50px;height:50px;" name="fontcolor" value="{{ adcarousel.fontcolor }}">
+            </div>
+            <div class="field">
+                <label>文字位置:</label>
+                <input type="text" name="fontposition" value="{{ adcarousel.fontposition }}" onblur="validateFontPosition(this)">
+            </div>
+            <div class="field">
+                <label>文字尺寸:</label>
+                <input type="text" name="fontsize" value="{{ adcarousel.fontsize }}">
+            </div>
+            <div class="field">
+                <label>参与轮播:</label>
+                <select name="isselected">
+                    <option value="1" {% if adcarousel and adcarousel.isselected %}selected{% endif %}>是</option>
+                    <option value="0" {% if adcarousel and not adcarousel.isselected %}selected{% endif %}>否</option>
+                </select>
+            </div>
+            <div class="field">
+                <label>创建人:</label>
+                <input type="text" name="createby" value="{{ adcarousel.createby }}" readonly>
+            </div>
+            <div class="field">
+                <label>创建日期:</label>
+                <input type="text" name="createat" value="{{ adcarousel.createat }}" readonly>
+            </div>
+            <div class="field">
+                <label>更新人:</label>
+                <input type="text" name="updateby" value="{{ adcarousel.updateby }}" readonly>
+            </div>
+            <div class="field">
+                <label>更新日期:</label>
+                <input type="text" name="updateat" value="{{ adcarousel.updateat }}" readonly>
+            </div>
+            <div>
+                <button type="submit">保存</button>
+                <button type="button" id="previewButton">预览</button>
+            </div>
+        </form>
+    </div>
+</body>
+
+</html>

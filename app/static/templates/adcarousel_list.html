@@ -1,0 +1,269 @@
+<!-- filepath: /root/pyproj/adcarousel/app/static/templates/adcarousel_list.html -->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Ad Carousel</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script language="javascript">
+        function updateShowTimeout(id, showTimeout) {
+            if (showTimeout < 5) {
+                alert('播放时间不能小于5秒');
+                return;
+            }
+            $.ajax({
+                url: '/adcarousel/' + id + '/update_showtimeout/',
+                type: 'POST',
+                data: {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                    'showtimeout': showTimeout
+                },
+                success: function (data) {
+                    // 不做任何提醒
+                },
+                error: function (xhr, status, error) {
+                    alert('播放时间更新失败: ' + xhr.responseText);
+                }
+            });
+        }
+        function edit(id) {
+            window.open('/adcarousel/' + id + '/');
+        }
+
+        function deleteAdcarousel(id) {
+            if (confirm('确定要删除这个轮播吗？')) {
+                $.ajax({
+                    url: '/adcarousel/' + id + '/delete/',
+                    type: 'POST',
+                    data: {
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    },
+                    success: function (data) {
+                       // alert('删除成功');
+                        location.reload();
+                    },
+                    error: function (xhr, status, error) {
+                        alert('删除失败: ' + xhr.responseText);
+                    }
+                });
+            }
+        }
+
+        function previewAdcarousel(id) {
+            window.open('/adcarousel/' + id + '/preview/', '_blank');
+        }
+
+        function toggleIsSelected(id, isSelected) {
+            $.ajax({
+                url: '/adcarousel/' + id + '/toggle_is_selected/',
+                type: 'POST',
+                data: {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                    'is_selected': isSelected
+                },
+                success: function (data) {
+                    // alert('状态更新成功');
+                },
+                error: function (xhr, status, error) {
+                    alert('状态更新失败: ' + xhr.responseText);
+                }
+            });
+        }
+
+        function updateOrderKey(id, orderKey) {
+            
+            if (orderKey < 0) {
+                alert('轮播顺序不能小于0');
+                return;
+            }
+            $.ajax({
+                url: '/adcarousel/' + id + '/update_orderkey/',
+                type: 'POST',
+                data: {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                    'orderkey': orderKey
+                },
+                success: function (data) {
+                    // 不做任何提醒
+                },
+                error: function (xhr, status, error) {
+                    alert('顺序更新失败: ' + xhr.responseText);
+                }
+            });
+        }
+
+        function updateFontColor(id, fontColor) {
+            $.ajax({
+                url: '/adcarousel/' + id + '/update_fontcolor/',
+                type: 'POST',
+                data: {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                    'fontcolor': fontColor
+                },
+                success: function (data) {
+                    // 不做任何提醒
+                },
+                error: function (xhr, status, error) {
+                    alert('文字颜色更新失败: ' + xhr.responseText);
+                }
+            });
+        }
+
+        function updateFontSize(id, fontSize) {
+            $.ajax({
+                url: '/adcarousel/' + id + '/update_fontsize/',
+                type: 'POST',
+                data: {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                    'fontsize': fontSize
+                },
+                success: function (data) {
+                    // 不做任何提醒
+                },
+                error: function (xhr, status, error) {
+                    alert('文字大小更新失败: ' + xhr.responseText);
+                }
+            });
+        }
+
+        function updateFontPosition(id, fontPosition) {
+            var regex = /^\d+,\d+$/;
+            if (!regex.test(fontPosition)) {
+                alert('文字位置格式不正确，请输入 "x,y" 格式的值');
+                return;
+            }
+            $.ajax({
+                url: '/adcarousel/' + id + '/update_fontposition/',
+                type: 'POST',
+                data: {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                    'fontposition': fontPosition
+                },
+                success: function (data) {
+                    // 不做任何提醒
+                },
+                error: function (xhr, status, error) {
+                    alert('文字位置更新失败: ' + xhr.responseText);
+                }
+            });
+        }
+        function previewImage(trObj){
+            var imageUrl = $(trObj).children("td")[0].innerText;
+            var image = new Image();
+            image.src = imageUrl;
+            image.height=300; // 提前载入缓存
+            $("#tdPreviewImage").html("");
+            $("#tdPreviewImage").html("<image src='"+imageUrl+"' height='300' />")
+        }
+    </script>
+    <style>
+        body {
+            background-color: #fafafa;
+            font-size: 14px;
+            font-family: 'Microsoft YaHei';
+            color: #303030;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        #tdPreviewImage{
+            text-align: center;
+            align-content: center;
+            justify-content: center;
+            align-items: center;
+        }
+
+        td {
+            border: 1px solid gray;
+            color: #303030;
+            cursor:default;
+        }
+
+        .td_title {
+            text-align: center;
+            height: 25px;
+            padding:5px;
+        }
+
+        a {
+            color: blue;
+            text-decoration: none;
+        }
+
+        input[type="number"] {
+            width: 40px;
+        }
+        table {
+            border-collapse: collapse;
+            border: 1px solid gray;
+            width: 80%;
+        }
+    </style>
+</head>
+
+<body>
+    
+    
+    <table>
+        <thead>
+            <tr style="border:0px solid gray;">
+                
+                <td colspan="9" style="border:0px;text-align:right">
+                    <a href="/adcarousel/new/" target="_blank">新增</a> &nbsp;
+                    <a href="/adcarousels/play/" target="_blank">播放</a> &nbsp; 
+                    <a href="/">刷新</a> &nbsp;
+                </td>
+            </tr>
+
+            <tr style="background-color:#e0e0e0;">
+                <td class="td_title">图片HTML路径</td>
+                <td class="td_title" width="70">显示秒数</td>
+                <td class="td_title" width="70">文字颜色</td>
+                <td class="td_title" width="70">文字位置</td>
+                <td class="td_title" width="70">文字尺寸</td>
+                <td class="td_title" width="70" >是否轮播</td>
+                <td class="td_title" width="70">轮播顺序</td>
+                <td class="td_title" width="120">操作</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for adcarousel in adcarousels %}
+            <tr onmouseover="previewImage(this);">
+                <td>{{adcarousel.picpath}}</td>
+                <td>
+                    <input type="number" name="showtimeout{{adcarousel.id}}" value="{{adcarousel.showtimeout}}" min="5" onblur="updateShowTimeout('{{adcarousel.id}}', this.value)">
+                </td>
+                <td>
+                    <input type="color" name="fontcolor{{adcarousel.id}}" value="{{adcarousel.fontcolor}}" onblur="updateFontColor('{{adcarousel.id}}', this.value)">
+                </td>
+                <td>
+                    <input type="text" style="width:80px" name="fontposition{{adcarousel.id}}" value="{{adcarousel.fontposition}}" pattern="\d+,\d+" onblur="updateFontPosition('{{adcarousel.id}}', this.value)">
+                </td>
+                <td>
+                    <input type="number" name="fontsize{{adcarousel.id}}" value="{{adcarousel.fontsize}}" onblur="updateFontSize('{{adcarousel.id}}', this.value)">
+                </td>
+                <td style="text-align:center">
+                    <input type="checkbox" name="chk{{adcarousel.id}}" {% if adcarousel.isselected %}checked{% endif %} onchange="toggleIsSelected('{{adcarousel.id}}', this.checked)">
+                </td>
+                <td>
+                    <input type="number" name="orderkey{{adcarousel.id}}" value="{{adcarousel.orderkey}}" min="0" onblur="updateOrderKey('{{adcarousel.id}}', this.value)">
+                </td>
+                <td>
+                    <a href="#" onclick="edit('{{adcarousel.id}}')"> 编辑 </a>&nbsp;
+                    <a href="#" onclick="deleteAdcarousel('{{adcarousel.id}}')"> 删 除 </a>&nbsp;
+                    <a href="#" onclick="previewAdcarousel('{{adcarousel.id}}')"> 预览 </a>&nbsp;
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr><td id="tdPreviewImage" height="310" colspan="9">
+        
+            </td></tr>
+        </tfoot>
+    </table>
+</body>
+
+</html>
