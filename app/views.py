@@ -33,6 +33,8 @@ def delete_adcarousel(request):
 
 def adcarousel_detail(request, id):
     adcarousel = get_object_or_404(Adcarousel, id=id)
+    if adcarousel.word == None:
+        adcarousel.word = ""
     return render(request, 'adcarousel_detial.html', {'adcarousel': adcarousel})
 
 def upload_file(request):
@@ -98,6 +100,7 @@ def adcarousel_create(request):
         adcarousel.fontposition = fontposition
         adcarousel.fontsize = request.POST.get('fontsize')
         adcarousel.isselected = int(request.POST.get('isselected'))
+        adcarousel.word = request.POST.get('word')
         adcarousel.createby = 'admin'
         adcarousel.createat = timezone.now()
         adcarousel.updateby = 'admin'
@@ -141,6 +144,7 @@ def adcarousel_update(request, id):
         adcarousel.fontposition = fontposition
         adcarousel.fontsize = request.POST.get('fontsize')
         adcarousel.isselected = int(request.POST.get('isselected'))
+        adcarousel.word = request.POST.get('word')
         adcarousel.updateby = 'admin'
         adcarousel.updateat = timezone.now()
         adcarousel.save()
@@ -308,3 +312,15 @@ def update_showtimeout(request, id):
         adcarousel.save()
         return JsonResponse({'status': 'success'})
     return JsonResponse({'status': 'error', 'message': 'Invalid showtimeout'}, status=400)
+
+def update_word(request, id):
+    if request.method == 'POST':
+        adcarousel = get_object_or_404(Adcarousel, id=id)
+        word = request.POST.get('word')
+        if word is not None:
+            adcarousel.word = word
+            adcarousel.save()
+            return JsonResponse({'status': 'success'})
+        else:
+            return JsonResponse({'status': 'error', 'message': 'Invalid word'}, status=400)
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)

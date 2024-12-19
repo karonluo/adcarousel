@@ -1,4 +1,4 @@
-<!-- app/static/templates/adcarousel_list_play.html -->
+<!-- filepath: /d:/git/adcarousel/app/static/templates/adcarousel_list_play.html -->
 <!DOCTYPE html>
 <html>
 
@@ -40,52 +40,101 @@
             animation: slideIn 1s forwards;
         }
 
-        .slide-out {
-            animation: slideOut 1s forwards;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes fadeOut {
-            from { opacity: 1; }
-            to { opacity: 0; }
-        }
-
-        @keyframes slideIn {
-            from { transform: translateX(100%); }
-            to { transform: translateX(0); }
-        }
-
-        @keyframes slideOut {
-            from { transform: translateX(0); }
-            to { transform: translateX(-100%); }
-        }
-
         .datetime {
             position: absolute;
             font-family: 'Microsoft YaHei';
             font-weight: bold;
+            color: white;
+            font-size: 24px;
+            left: 50px;
+            top: 50px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+            }
+            to {
+                transform: translateX(0);
+            }
         }
     </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body>
-    {% for adcarousel in adcarousels %}
-    <div class="adcarousel" id="adcarousel-{{ adcarousel.id }}" style="background-image: url('{{ adcarousel.picpath }}');">
-        <div class="datetime" id="datetime-{{ adcarousel.id }}" style="
-            color: {{ adcarousel.fontcolor }};
-            font-size: {{ adcarousel.fontsize }}px;
-            left: {{ adcarousel.font_position_x }}px;
-            top: {{ adcarousel.font_position_y }}px;">
-        </div>
-    </div>
-    {% endfor %}
+    <div class="adcarousel" id="adcarousel"></div>
+    <div class="datetime" id="datetime"></div>
 
-    <script>
-        function updateDateTime(id) {
+    <script language="javascript">
+        var adcarousels = [
+            {% for adcarousel in adcarousels %}
+            {
+                picpath: '{{ adcarousel.picpath }}',
+                showtimeout: {{ adcarousel.showtimeout }},
+                fontcolor: '{{ adcarousel.fontcolor }}',
+                fontsize: {{ adcarousel.fontsize }},
+                fontposition: '{{ adcarousel.fontposition }}',
+                word: '{{ adcarousel.word }}'
+            },
+            {% endfor %}
+        ];
+
+        var currentIndex = 0;
+
+        function showAdcarousel(index) {
+            var adcarousel = adcarousels[index];
+            var adcarouselElement = document.getElementById('adcarousel');
+            var datetimeElement = document.getElementById('datetime');
+
+            adcarouselElement.style.backgroundImage = 'url(' + adcarousel.picpath + ')';
+            adcarouselElement.classList.add('fade-in');
+            adcarouselElement.style.display = 'block';
+
+            var fontPosition = adcarousel.fontposition.split(',');
+            datetimeElement.style.left = fontPosition[0] + 'px';
+            datetimeElement.style.top = fontPosition[1] + 'px';
+            datetimeElement.style.color = adcarousel.fontcolor;
+            datetimeElement.style.fontSize = adcarousel.fontsize + 'px';
+
+            if (adcarousel.word) {
+                datetimeElement.innerText = adcarousel.word;
+            } else {
+                updateDateTime();
+                setInterval(updateDateTime, 1000);
+            }
+
+            setTimeout(function () {
+                adcarouselElement.classList.remove('fade-in');
+                adcarouselElement.classList.add('fade-out');
+                setTimeout(function () {
+                    adcarouselElement.style.display = 'none';
+                    adcarouselElement.classList.remove('fade-out');
+                    currentIndex = (currentIndex + 1) % adcarousels.length;
+                    showAdcarousel(currentIndex);
+                }, 1000);
+            }, adcarousel.showtimeout * 1000);
+        }
+
+        function updateDateTime() {
             var now = new Date();
             var formattedDateTime = now.getFullYear() + '.' +
                 ('0' + (now.getMonth() + 1)).slice(-2) + '.' +
@@ -93,53 +142,10 @@
                 ('0' + now.getHours()).slice(-2) + ':' +
                 ('0' + now.getMinutes()).slice(-2) + ':' +
                 ('0' + now.getSeconds()).slice(-2);
-            document.getElementById('datetime-' + id).innerText = formattedDateTime;
+            document.getElementById('datetime').innerText = formattedDateTime;
         }
 
-        {% for adcarousel in adcarousels %}
-        setInterval(function() {
-            updateDateTime('{{ adcarousel.id }}');
-        }, 1000);
-        updateDateTime('{{ adcarousel.id }}');
-        {% endfor %}
-
-        var currentIndex = 0;
-        var adcarousels = document.querySelectorAll('.adcarousel');
-        var showTimeouts = [
-            {% for adcarousel in adcarousels %}
-            {{ adcarousel.showtimeout }},
-            {% endfor %}
-        ];
-
-        var animations = ['fade-in', 'fade-out', 'slide-in', 'slide-out'];
-
-        function getRandomAnimation() {
-            return animations[Math.floor(Math.random() * animations.length)];
-        }
-
-        function showNextAdcarousel() {
-            var currentAdcarousel = adcarousels[currentIndex];
-            currentAdcarousel.classList.remove('fade-in', 'slide-in');
-            currentAdcarousel.classList.add('fade-out', 'slide-out');
-
-            currentIndex = (currentIndex + 1) % adcarousels.length;
-            var nextAdcarousel = adcarousels[currentIndex];
-            nextAdcarousel.classList.remove('fade-out', 'slide-out');
-            nextAdcarousel.classList.add('fade-in', 'slide-in');
-            nextAdcarousel.style.display = 'block';
-
-            setTimeout(function() {
-                currentAdcarousel.style.display = 'none';
-            }, 1000);
-
-            setTimeout(showNextAdcarousel, showTimeouts[currentIndex] * 1000);
-        }
-
-        if (adcarousels.length > 0) {
-            adcarousels[0].style.display = 'block';
-            adcarousels[0].classList.add('fade-in', 'slide-in');
-            setTimeout(showNextAdcarousel, showTimeouts[0] * 1000);
-        }
+        showAdcarousel(currentIndex);
     </script>
 </body>
 

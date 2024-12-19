@@ -36,4 +36,5 @@ urlpatterns = [
     path('adcarousel/<str:id>/update_fontsize/', views.update_fontsize, name='update_fontsize'),
     path('adcarousel/<str:id>/update_fontposition/', views.update_fontposition, name='update_fontposition'),
     path('adcarousel/<str:id>/update_showtimeout/', views.update_showtimeout, name='update_showtimeout'),
+    path('adcarousel/<str:id>/update_word/', views.update_word, name='update_word'),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

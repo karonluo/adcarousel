@@ -48,8 +48,12 @@
             document.getElementById('datetime').innerText = formattedDateTime;
         }
 
-        setInterval(updateDateTime, 1000);
-        updateDateTime();
+        {% if adcarousel.word %}
+            document.getElementById('datetime').innerText = '{{ adcarousel.word }}';
+        {% else %}
+            setInterval(updateDateTime, 1000);
+            updateDateTime();
+        {% endif %}
 
         // 允许拖动 datetime 元素
         var datetime = document.getElementById('datetime');

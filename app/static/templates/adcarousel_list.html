@@ -6,6 +6,22 @@
     <title>Ad Carousel</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script language="javascript">
+        function updateWord(id, word) {
+            $.ajax({
+                url: '/adcarousel/' + id + '/update_word/',
+                type: 'POST',
+                data: {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                    'word': word
+                },
+                success: function (data) {
+                    // 不做任何提醒
+                },
+                error: function (xhr, status, error) {
+                    alert('文字内容更新失败: ' + xhr.responseText);
+                }
+            });
+        }
         function updateShowTimeout(id, showTimeout) {
             if (showTimeout < 5) {
                 alert('播放时间不能小于5秒');
@@ -223,6 +239,7 @@
                 <td class="td_title" width="70">文字颜色</td>
                 <td class="td_title" width="70">文字位置</td>
                 <td class="td_title" width="70">文字尺寸</td>
+                <td class="td_title" width="200">文字内容</td>"
                 <td class="td_title" width="70" >是否轮播</td>
                 <td class="td_title" width="70">轮播顺序</td>
                 <td class="td_title" width="120">操作</td>
@@ -239,10 +256,13 @@
                     <input type="color" name="fontcolor{{adcarousel.id}}" value="{{adcarousel.fontcolor}}" onblur="updateFontColor('{{adcarousel.id}}', this.value)">
                 </td>
                 <td>
-                    <input type="text" style="width:80px" name="fontposition{{adcarousel.id}}" value="{{adcarousel.fontposition}}" pattern="\d+,\d+" onblur="updateFontPosition('{{adcarousel.id}}', this.value)">
+                    <input type="text" style="width:70px" name="fontposition{{adcarousel.id}}" value="{{adcarousel.fontposition}}" pattern="\d+,\d+" onblur="updateFontPosition('{{adcarousel.id}}', this.value)">
                 </td>
                 <td>
                     <input type="number" name="fontsize{{adcarousel.id}}" value="{{adcarousel.fontsize}}" onblur="updateFontSize('{{adcarousel.id}}', this.value)">
+                </td>
+                <td>
+                    <input type="text" name="word{{adcarousel.id}}" value="{{adcarousel.word}}" onblur="updateWord('{{adcarousel.id}}', this.value)">
                 </td>
                 <td style="text-align:center">
                     <input type="checkbox" name="chk{{adcarousel.id}}" {% if adcarousel.isselected %}checked{% endif %} onchange="toggleIsSelected('{{adcarousel.id}}', this.checked)">

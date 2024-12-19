@@ -78,7 +78,7 @@ WSGI_APPLICATION = 'adcarousel.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',  # 使用 MySQL 引擎
-        'NAME': 'db_adcarousel',                  # 数据库名称
+        'NAME': 'db_adcarousel_dev',                  # 数据库名称
         'USER': 'root',                      # 数据库用户名
         'PASSWORD': 'Password123!!##**',              # 数据库密码
         'HOST': '139.224.46.37',                   # 数据库主机地址

@@ -131,7 +131,7 @@ class Adcarousel(models.Model):
     fontposition = models.CharField(db_column='fontPosition', max_length=16, blank=True, null=True, db_comment='文字尺寸')  # Field name made lowercase.
     fontsize = models.SmallIntegerField (db_column='fontSize',blank=True, null=True, db_comment='文字位置')  # Field name made lowercase.
     orderkey = models.IntegerField(db_column='orderKey', blank=True, null=True, db_comment='轮播顺序号')  # Field name made lowercase. This field type is a guess.
-    
+    word = models.CharField(db_column='word', max_length=16, blank=True, null=True, db_comment='文字内容')  # Field name made lowercase.
     createby = models.CharField(db_column='createBy', max_length=32, blank=True, null=True, db_comment='创建人')  # Field name made lowercase.
     createat = models.DateTimeField(db_column='createAt', blank=True, null=True, db_comment='创建日期')  # Field name made lowercase.
     updateby = models.CharField(db_column='updateBy', max_length=255, blank=True, null=True, db_comment='更新人')  # Field name made lowercase.
