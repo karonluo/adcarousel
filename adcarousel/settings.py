@@ -81,7 +81,7 @@ DATABASES = {
         'NAME': 'db_adcarousel',                  # 数据库名称
         'USER': 'root',                      # 数据库用户名
         'PASSWORD': 'Password123!!##**',              # 数据库密码
-        'HOST': '172.17.0.1',                   # 数据库主机地址
+        'HOST': '139.224.46.37',                   # 数据库主机地址
         'PORT': '9998',                        # 数据库端口号，默认是 3306
         'OPTIONS': {
             'charset': 'utf8mb4',             # 确保支持完整的 Unicode 字符集

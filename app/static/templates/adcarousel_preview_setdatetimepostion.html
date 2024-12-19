@@ -1,0 +1,127 @@
+<!-- filepath: /d:/git/adcarousel/app/static/templates/adcarousel_preview_setdatetimepostion.html -->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Ad Carousel Preview</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            width: 100vw;
+            background-image: url('{{ adcarousel.picpath }}');
+        }
+
+        .datetime {
+            position: absolute;
+            font-family: 'Microsoft YaHei';
+            font-weight: bold;
+            color: {{ adcarousel.fontcolor }};
+            font-size: {{ adcarousel.fontsize }}px;
+            left: {{ font_position_x }}px;
+            top: {{ font_position_y }}px;
+            cursor: move;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body>
+    <div class="datetime" id="datetime"></div>
+
+    <script language="javascript">
+        function updateDateTime() {
+            var now = new Date();
+            var formattedDateTime = now.getFullYear() + '.' +
+                ('0' + (now.getMonth() + 1)).slice(-2) + '.' +
+                ('0' + now.getDate()).slice(-2) + ' ' +
+                ('0' + now.getHours()).slice(-2) + ':' +
+                ('0' + now.getMinutes()).slice(-2) + ':' +
+                ('0' + now.getSeconds()).slice(-2);
+            document.getElementById('datetime').innerText = formattedDateTime;
+        }
+
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
+
+        // 允许拖动 datetime 元素
+        var datetime = document.getElementById('datetime');
+        var isDragging = false;
+        var offsetX, offsetY;
+
+        datetime.addEventListener('mousedown', function (e) {
+            isDragging = true;
+            offsetX = e.clientX - datetime.offsetLeft;
+            offsetY = e.clientY - datetime.offsetTop;
+        });
+
+        document.addEventListener('mousemove', function (e) {
+            if (isDragging) {
+                datetime.style.left = (e.clientX - offsetX) + 'px';
+                datetime.style.top = (e.clientY - offsetY) + 'px';
+            }
+        });
+
+        document.addEventListener('mouseup', function () {
+            if (isDragging) {
+                isDragging = false;
+                // 记录 x, y 坐标
+                var x = datetime.style.left.replace('px', '');
+                var y = datetime.style.top.replace('px', '');
+                console.log('New position:', x, y);
+                // 发送 AJAX 请求将 x, y 坐标保存到服务器
+                $.ajax({
+                    url: '/adcarousel/{{ adcarousel.id }}/update_fontposition/',
+                    type: 'POST',
+                    data: {
+                        'csrfmiddlewaretoken': '{{ csrf_token }}',
+                        'fontposition': x + ',' + y
+                    },
+                    success: function (data) {
+                        console.log('位置更新成功');
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('位置更新失败: ' + xhr.responseText);
+                    }
+                });
+            }
+        });
+
+        // 允许通过鼠标滚轮修改字体大小
+        datetime.addEventListener('wheel', function (e) {
+            e.preventDefault();
+            var fontSize = parseInt(window.getComputedStyle(datetime).fontSize);
+            if (e.deltaY < 0) {
+                fontSize += 1; // 放大字体
+            } else {
+                fontSize -= 1; // 缩小字体
+            }
+            datetime.style.fontSize = fontSize + 'px';
+            console.log('New font size:', fontSize);
+            // 发送 AJAX 请求将新的字体大小保存到服务器
+            $.ajax({
+                url: '/adcarousel/{{ adcarousel.id }}/update_fontsize/',
+                type: 'POST',
+                data: {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                    'fontsize': fontSize
+                },
+                success: function (data) {
+                    console.log('字体大小更新成功');
+                },
+                error: function (xhr, status, error) {
+                    console.error('字体大小更新失败: ' + xhr.responseText);
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

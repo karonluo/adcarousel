@@ -168,8 +168,17 @@ def adcarousel_detail(request, id):
     adcarousel = get_object_or_404(Adcarousel, id=id)
     return render(request, 'adcarousel_detial.html', {'adcarousel': adcarousel})
 
-
 def adcarousel_preview(request, id):
+    adcarousel = get_object_or_404(Adcarousel, id=id)
+    
+    font_position = adcarousel.fontposition.split(',')
+    context = {
+        'adcarousel': adcarousel,
+        'font_position_x': font_position[0],
+        'font_position_y': font_position[1],
+    }
+    return render(request, 'adcarousel_preview_setdatetimepostion.html', context)
+def adcarousel_preview1(request, id):
     adcarousel = get_object_or_404(Adcarousel, id=id)
     
     font_position = adcarousel.fontposition.split(',')
