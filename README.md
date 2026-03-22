@@ -24,7 +24,7 @@
 
 ### 特别鸣谢
 
-代码生成：Github Copilot.
+代码生成：GitHub Copilot.
 
 ### VS Code / GitHub Copilot 常见报错说明
 
